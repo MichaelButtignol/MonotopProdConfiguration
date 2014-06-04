@@ -1,0 +1,18 @@
+
+mergeJSON.py DoubleElectronRun2012A/res/lumiSummary.json DoubleElectronRun2012B/res/lumiSummary.json DoubleElectronRun2012C/res/lumiSummary.json DoubleElectronRun2012D/res/lumiSummary.json > summaryJsonDoubleEG.json
+pixelLumiCalc.py -i summaryJsonDoubleEG.json overview
+19.712
+
+
+mergeJSON.py DoubleMuParkedRun2012A/res/lumiSummary.json DoubleMuParkedRun2012B/res/lumiSummary.json DoubleMuParkedRun2012C/res/lumiSummary.json DoubleMuParkedRun2012D/res/lumiSummary.json > summaryJsonDoubleMu.json
+pixelLumiCalc.py -i summaryJsonDoubleMu.json overview
+19.674
+
+mergeJSON.py MuEGRun2012A/res/lumiSummary.json MuEGRun2012B/res/lumiSummary.json MuEGRun2012C/res/lumiSummary.json MuEGRun2012D/res/lumiSummary.json > summaryJsonMuEG.json
+pixelLumiCalc.py -i summaryJsonMuEG.json overview
+19.703 pb 
+
+
+cp  /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/PileUp/pileup_JSON_DCSONLY_190389-208686_All_2012_pixelcorr.txt .
+
+pileupCalc.py -i summaryJsonMuEG.json --inputLumiJSON pileup_JSON_DCSONLY_190389-208686_All_2012_pixelcorr.txt --calcMode true --minBiasXsec 69400 --maxPileupBin 60 --numPileupBins 60  MyDataPileupHistogram.root
