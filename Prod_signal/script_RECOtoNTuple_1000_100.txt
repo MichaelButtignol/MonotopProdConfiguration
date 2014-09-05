@@ -1,0 +1,60 @@
+#!/bin/bash
+
+########################################################################################################
+## Before run this script, make sure you have ran the script_publish.txt in RootToRECO/Prod_S1/    #####
+##												    ####
+## Make also sure you have ran the CMRF_DPM.txt. It browses /dpm to select the good file to NTuplize ### 
+########################################################################################################
+
+
+TASKS="1000p0_mchi100"
+
+scenario='1'
+cp crab.cfg Prod_S${scenario}
+cp minitreeproducer_5311_cfg.py Prod_S${scenario}
+
+cd Prod_S${scenario}
+
+for BENCHMARK in $TASKS
+do
+	cp ../rawDump_${BENCHMARK} ./
+	for number in `seq 1 1 2`
+	do
+		# List all the files that have the same job number as this one (9 is for the 9th column)
+		OCCURENCES=`cat rawDump_${BENCHMARK} | awk '{ print $9 }' | /bin/grep prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO_n1000_._._....root`
+		NOCCURENCES=`echo $OCCURENCES | wc -w`
+	
+		# If there is at least two files with same job number
+       		if [[ $NOCCURENCES -ge 2 ]]
+       		then
+
+      			# Find the most recent one by looking at the date
+       			OCC_MOSTRECENT=""
+       			DATEINSEC_MOSTRECENT=0
+       			for OCC in $OCCURENCES
+      			do
+				DATE=`cat rawDump_${BENCHMARK} | grep $OCC | awk '{print $6 " " $7 " " $8}'`
+               			DATEINSEC=`date -d "$DATE" +'%s'`
+               			if [[ $DATEINSEC -gt $DATEINSEC_MOSTRECENT ]]
+               			then
+              				OCC_MOSTRECENT=$OCC
+              				DATEINSEC_MOSTRECENT=$DATEINSEC
+               			fi
+        		done
+		else OCC_MOSTRECENT=$OCCURENCES
+		fi
+
+		sed -ri "s/store.*/store\/user\/mbuttign\/JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO\/JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO\/499dbab8e408f2a29e86333655905056\/${OCC_MOSTRECENT}'/g" minitreeproducer_5311_cfg.py
+		sed -ri "s/fileName = cms.untracked.*/fileName = cms.untracked.string( 'store\/user\/mbuttign\/JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO\/NTuple_prod_S${scenario}_mres${BENCHMARK}p0_${number}_n1000.root')/g" minitreeproducer_5311_cfg.py
+
+		sed -ri "s/datasetpath.*/datasetpath            = \/JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO\/mbuttign-JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO-499dbab8e408f2a29e86333655905056\/USER/g" crab.cfg
+		sed -ri "s/ui_working_dir.*/ui_working_dir        = S${scenario}_mres${BENCHMARK}p0_NTuple\/S${scenario}_mres${BENCHMARK}p0_${number}/g" crab.cfg
+		sed -ri "s/user_remote_dir         =.*/user_remote_dir         = JUN2014_LeptonicMonotop_8TeV\/prod_S${scenario}\/prod_S${scenario}_mres${BENCHMARK}p0/g" crab.cfg
+		sed -ri "s/publish_data_name.*/publish_data_name       = JUN2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_NTuple/g" crab.cfg
+ 		
+	        crab -create
+		crab -submit -c S${scenario}_mres${BENCHMARK}p0_NTuple/S${scenario}_mres${BENCHMARK}p0_${number}	
+	done
+rm rawDump_${BENCHMARK}
+done
+cd ../

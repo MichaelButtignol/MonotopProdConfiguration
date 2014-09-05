@@ -1,0 +1,36 @@
+#!/bin/bash
+
+BENCHMARK="1000p0_mchi825"
+
+scenario='1'
+for number in `seq 2 1 3`
+do
+		# List all the files that have the same job number as this one (9 is for the 9th column)
+		OCCURENCES=`cat rawDump_${BENCHMARK} | awk '{ print $9 }' | /bin/grep prod_S${scenario}_mres${BENCHMARK}p0_RECO_${number}_.*.root`
+		NOCCURENCES=`echo $OCCURENCES | wc -w`
+	
+		# If there is at least two files with same job number
+       		if [[ $NOCCURENCES -ge 2 ]]
+       		then
+
+      			# Find the most recent one by looking at the date
+       			OCC_MOSTRECENT=""
+       			DATEINSEC_MOSTRECENT=0
+       			for OCC in $OCCURENCES
+      			do
+				DATE=`cat rawDump_${BENCHMARK} | grep $OCC | awk '{print $6 " " $7 " " $8}'`
+               			DATEINSEC=`date -d "$DATE" +'%s'`
+               			if [[ $DATEINSEC -gt $DATEINSEC_MOSTRECENT ]]
+               			then
+              				OCC_MOSTRECENT=$OCC
+              				DATEINSEC_MOSTRECENT=$DATEINSEC
+               			fi
+        		done
+		else OCC_MOSTRECENT=$OCCURENCES
+		fi
+
+		sed -ri "s/store.*/store\/user\/mbuttign\/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_RECO\/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_RECO\/fd696edeb239940370cc1c2446e7212d\/${OCC_MOSTRECENT}'/g" minitreeproducer_5311_cfg.py
+		sed -ri "s/fileName = cms.untracked.*/fileName = cms.untracked.string( 'store\/user\/mbuttign\/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_NTuple\/NTuple_prod_S${scenario}_mres${BENCHMARK}p0_${number}.root')/g" minitreeproducer_5311_cfg.py
+		cmsRun minitreeproducer_5311_cfg.py
+#rm rawDump_${BENCHMARK}
+done

@@ -273,7 +273,7 @@ process.MiniTreeProduction = cms.EDProducer('MiniTreeProducer',
 # ----------------------   Trigger -------------------------------
          doTrigger           = cms.bool(True),
          saveAllTriggers     = cms.bool(True), #should be True by default !!
-         triggerList         = cms.vstring("HLT_Mu17_Mu8_v17", "HLT_Mu17_TkMu8_v10", "HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", "HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", "HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"),
+         triggerList         = cms.vstring("HLT Mu15 eta2p1_v*","HLT_IsoMu24_v*","HLT_IsoMu24_eta2p1_v*","HLT Ele22 CaloIdL CaloIsoVL_v*","HLT_Ele27_WP80_v*"),
 # ----------------------  Electrons -------------------------------
          doElectrons         = cms.bool(True),
          electron_cut_pt     = cms.double(10),

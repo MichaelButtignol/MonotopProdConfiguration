@@ -1,5 +1,7 @@
 *.pyc
 *.so
+*.history
+*.root
 
 DataFormats/
 EgammaAnalysis/
@@ -10,4 +12,12 @@ PhysicsTools/
 RecoEgamma/
 RecoMET/
 
-Prod_signal/ProductionToHepMC/prod*
+Prod_data/json/
+Prod_data/Single*
+
+Prod_bdf/QCD_Pt*
+Prod_bdf/*Jets*
+Prod_bdf/Tbar_*
+Prod_bdf/T_*
+Prod_bdf/TT*
+Prod_bdf/*Incl*

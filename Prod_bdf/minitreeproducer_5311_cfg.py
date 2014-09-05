@@ -273,7 +273,7 @@ process.MiniTreeProduction = cms.EDProducer('MiniTreeProducer',
          isData              = cms.bool(False), # true if processing AOD data
 # ----------------------   Trigger -------------------------------
          doTrigger           = cms.bool(True),
-         saveAllTriggers     = cms.bool(False), #should be True by default !!
+         saveAllTriggers     = cms.bool(True), #should be True by default !!
          triggerList         = cms.vstring("HLT_Mu17_Mu8_v17", "HLT_Mu17_TkMu8_v10", "HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", "HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", "HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"),
 # ----------------------  Electrons -------------------------------
          doElectrons         = cms.bool(True),

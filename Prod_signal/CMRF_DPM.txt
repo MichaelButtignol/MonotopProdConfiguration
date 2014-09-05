@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# To check the most recent RECO files on DPM and to remove the other ones in case
+# Need to be called before 'script_HLTtoNTuple.txt' because it feed it with the exact name of the input file needed to compute a NTuple (because indentation does not exist on DPM)
+
+#TASKS="1000p0_mchi825 1000p0_mchi100 500p0_mchi100"
+TASKS="1000p0_mchi825"
+scenario='1'
+rm rawDump_*
+for BENCHMARK in $TASKS
+do
+#	for number in in `seq 1 1 100`
+#	do
+		tempfile=$(mktemp)
+		cat > $tempfile<<-EOF
+		rfdir /dpm/in2p3.fr/home/cms/phedex/store/user/mbuttign/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_RECO/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_RECO/fd696edeb239940370cc1c2446e7212d/| /bin/grep prod_S${scenario}_mres${BENCHMARK}p0_RECO.* >> rawDump_${BENCHMARK}
+		EOF
+	
+#		rfdir /dpm/in2p3.fr/home/cms/phedex/store/user/mbuttign/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO/AUG2014_LeptonicMonotop_8TeV_prod_S${scenario}_mres${BENCHMARK}p0_${number}_RECO/fd696edeb239940370cc1c2446e7212d/| /bin/grep prod_S${scenario}_mres${BENCHMARK}p0_.*_RECO_n1000_._._....root >> rawDump_${BENCHMARK}
+
+		#Because when CMSSW environment is setup, rfdir is not available anymore but in a screen :)
+		screen -Xr tmp_prod readbuf $tempfile
+		screen -Xr tmp_prod paste .
+		rm -f $tempfile
+#	done
+done	
+	
